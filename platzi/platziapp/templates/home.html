@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Platzi Store{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="bg-primary text-white p-5 rounded-3 text-center position-relative">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-store"></i> Bienvenido a Platzi Store
+            </h1>
+            <p class="lead mb-4">Descubre los mejores productos con nuestra API de demostración</p>
+            
+            <!-- Barra de búsqueda por ID -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-6 col-lg-4">
+                    <form id="searchForm" class="d-flex" onsubmit="searchProductById(event)">
+                        <div class="input-group">
+                            <input type="number" 
+                                   id="productIdInput" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Buscar por ID..." 
+                                   min="1" 
+                                   required>
+                            <button class="btn btn-light btn-lg" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Botón para agregar producto -->
+            <div class="mt-4">
+                <a href="{% url 'platziapp:create_product' %}" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-plus-circle me-2"></i>Agregar Producto
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas rápidas -->
+<div class="row mb-5">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="me-3">
+                        <i class="fas fa-box-open fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title mb-0">{{ featured_products|length|default:"0" }}</h3>
+                        <small class="text-muted">Productos Destacados</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="me-3">
+                        <i class="fas fa-tags fa-2x text-success"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title mb-0">5+</h3>
+                        <small class="text-muted">Categorías</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="me-3">
+                        <i class="fas fa-star fa-2x text-warning"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title mb-0">4.8</h3>
+                        <small class="text-muted">Calificación</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="me-3">
+                        <i class="fas fa-users fa-2x text-info"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title mb-0">1000+</h3>
+                        <small class="text-muted">Clientes Felices</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Productos Destacados -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <i class="fas fa-fire text-danger me-2"></i>Productos Destacados
+            </h2>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.reload()">
+                    <i class="fas fa-sync-alt me-1"></i>Actualizar
+                </button>
+                <a href="{% url 'platziapp:create_product' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i>Nuevo Producto
+                </a>
+            </div>
+        </div>
+        <hr class="mt-3">
+    </div>
+</div>
+
+ 
+{% if featured_products %}
+<div class="row">
+    {% for product in featured_products %}
+    <div class="col-md-4 col-lg-2 mb-4">
+        <div class="card product-card h-100 shadow-sm border-0">
+            {% if product.images.0 %}
+            <div class="position-relative">
+                <img src="{{ product.images.0 }}" class="card-img-top product-image" alt="{{ product.title }}" 
+                     onerror="this.src='https://via.placeholder.com/300x200?text=Sin+Imagen'"
+                     style="height: 200px; object-fit: cover;">
+                
+                <!-- Badge de categoría -->
+                {% if product.category %}
+                <span class="position-absolute top-0 start-0 badge bg-primary m-2">
+                    {{ product.category.name }}
+                </span>
+                {% endif %}
+                
+                <!-- Badge de precio -->
+                <span class="position-absolute top-0 end-0 badge bg-success m-2">
+                    ${{ product.price }}
+                </span>
+            </div>
+            {% else %}
+            <img src="https://via.placeholder.com/300x200?text=Sin+Imagen" class="card-img-top product-image" 
+                 alt="Sin imagen" style="height: 200px; object-fit: cover;">
+            {% endif %}
+            
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title fw-bold">{{ product.title|truncatechars:50 }}</h5>
+                <p class="card-text flex-grow-1 text-muted">{{ product.description|truncatechars:80 }}</p>
+                
+                <div class="mt-auto">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'platziapp:product_detail' product.id %}" class="btn btn-primary">
+                            <i class="fas fa-eye me-1"></i>Ver Detalles
+                        </a>
+                        <small class="text-center text-muted">
+                            <i class="fas fa-tag me-1"></i>ID: {{ product.id }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Botón para ver más productos -->
+<div class="row mt-4">
+    <div class="col-12 text-center">
+       
+    </div>
+</div>
+
+{% else %}
+<!-- Mensaje cuando no hay productos -->
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info text-center border-0 shadow-sm" role="alert">
+            <div class="mb-4">
+                <i class="fas fa-box-open fa-4x text-info"></i>
+            </div>
+            <h4 class="alert-heading">¡No hay productos disponibles!</h4>
+            <p class="mb-4">No se pudieron cargar los productos en este momento. Esto puede deberse a problemas de conexión con la API.</p>
+            <hr>
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <button class="btn btn-info" onclick="location.reload()">
+                    <i class="fas fa-refresh me-1"></i>Recargar Página
+                </button>
+                <a href="{% url 'platziapp:create_product' %}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-1"></i>Agregar Primer Producto
+                </a>
+               
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Información adicional -->
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <i class="fas fa-shipping-fast fa-3x text-primary mb-3"></i>
+                <h4>Envío Rápido</h4>
+                <p class="text-muted">Entrega en 24-48 horas en toda la ciudad</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                <h4>Compra Segura</h4>
+                <p class="text-muted">Tus datos están protegidos con nosotros</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <i class="fas fa-headset fa-3x text-info mb-3"></i>
+                <h4>Soporte 24/7</h4>
+                <p class="text-muted">Estamos aquí para ayudarte cuando lo necesites</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para la búsqueda -->
+<script>
+function searchProductById(event) {
+    event.preventDefault();
+    
+    const productId = document.getElementById('productIdInput').value;
+    
+    if (productId && productId > 0) {
+        // Construir la URL usando el patrón de Django
+        const detailUrl = "{% url 'platziapp:product_detail' 0 %}".replace('0', productId);
+        
+        // Redirigir a la página de detalles
+        window.location.href = detailUrl;
+    } else {
+        // Mostrar mensaje de error si el ID no es válido
+        alert('Por favor, ingresa un ID de producto válido (número mayor a 0)');
+    }
+}
+
+// Permitir búsqueda con Enter
+document.getElementById('productIdInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        searchProductById(event);
+    }
+});
+</script>
+
+<!-- CSS adicional -->
+<style>
+.product-card {
+    transition: all 0.3s ease;
+    border-radius: 15px;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.product-image {
+    border-radius: 15px 15px 0 0;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.btn {
+    border-radius: 10px;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.badge {
+    border-radius: 10px;
+}
+
+/* Estilos para la barra de búsqueda */
+.input-group .form-control {
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+}
+
+.input-group .btn {
+    border-radius: 0 10px 10px 0;
+    border-left: none;
+}
+
+.input-group .form-control:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.input-group .form-control::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .input-group .form-control,
+    .input-group .btn {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+}
+</style>
+
+{% endblock %}

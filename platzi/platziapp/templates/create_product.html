@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Nuevo Producto</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .input-group-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px 0 0 10px;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .is-invalid {
+            border-color: #dc3545;
+        }
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #dc3545;
+        }
+        .field-icon {
+            color: #667eea;
+        }
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-plus-circle me-2"></i>
+                            Registrar Nuevo Producto
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Mostrar mensajes de Django -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="post" id="productForm">
+                            {% csrf_token %}
+                            
+                            <!-- Nombre del producto -->
+                            <div class="mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label required-field">
+                                    <i class="fas fa-tag field-icon me-2"></i>Nombre
+                                </label>
+                                <input type="text" 
+                                       name="title" 
+                                       class="form-control" 
+                                       placeholder="Ingresa el nombre del producto"
+                                       id="title"
+                                       value="{{ form.title.value|default:'' }}">
+                                    </input>
+                               
+                            </div>
+
+                            <!-- Precio -->
+                            <div class="mb-3">
+                                <label for="{{ form.price.id_for_label }}" class="form-label required-field">
+                                    <i class="fas fa-dollar-sign field-icon me-2"></i>Precio
+                                </label>
+                                <input type="number" 
+                                       name="price" 
+                                       class="form-control" 
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0"
+                                       id="price"
+                                       value="{{ form.price.value|default:'' }}">
+                                    </input>
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label required-field">
+                                    <i class="fas fa-align-left field-icon me-2"></i>Descripción
+                                </label>
+                               <textarea type="text" 
+                                       name="description" 
+                                       class="form-control" 
+                                       rows="4"
+                                       placeholder="Describe el producto..."
+                                       id="description"
+                                       value="{{ form.description.value|default:'' }}">
+                                    </textarea>
+                            </div>
+
+                            <!-- Categoría -->
+                            <div class="mb-3">
+                                <label for="{{ form.category_id.id_for_label }}" class="form-label required-field">
+                                    <i class="fas fa-list field-icon me-2"></i>Categoría
+                                </label>
+                                <select name="category_id"
+                                        class="form-select"
+                                        id="category_id">
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" {% if category.id == form.category_id.value %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Imágenes -->
+                            <div class="mb-3">
+                                <label for="{{ form.images.id_for_label }}" class="form-label">
+                                    <i class="fas fa-images field-icon me-2"></i>Imágenes
+                                </label>
+                                <input type="text" 
+                                       name="images" 
+                                       class="form-control" 
+                                       placeholder="https://ejemplo.com/imagen1.jpg, https://ejemplo.com/imagen2.jpg"
+                                       id="images"
+                                       value="{{ form.images.value|default:'' }}">
+                                    </input>
+                            </div>
+
+                            <!-- Mostrar errores generales del formulario -->
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    {% for error in form.non_field_errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <!-- Botones -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <a href="{% url 'platziapp:home' %}" class="btn btn-secondary me-md-2">
+                                    <i class="fas fa-arrow-left me-1"></i>Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
+                                    <i class="fas fa-save me-1"></i>Registrar Producto
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('productForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Agregar clases de error a campos inválidos
+            {% if form.errors %}
+                {% for field, errors in form.errors.items %}
+                    
+                    if (field_{{ field }}) {
+                        field_{{ field }}.classList.add('is-invalid');
+                    }
+                {% endfor %}
+            {% endif %}
+
+            // Manejar envío del formulario
+            form.addEventListener('submit', function(e) {
+                // Mostrar estado de carga
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Registrando...';
+                submitBtn.disabled = true;
+                
+                // Limpiar errores previos
+                const invalidFields = document.querySelectorAll('.is-invalid');
+                invalidFields.forEach(field => field.classList.remove('is-invalid'));
+                
+                // El formulario se enviará normalmente
+                // Restaurar el botón después de un tiempo si hay errores
+                setTimeout(() => {
+                    if (submitBtn.disabled) {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                }, 5000);
+            });
+
+            // Validación en tiempo real
+            const titleField = document.getElementById('{{ form.title.id_for_label }}');
+            const priceField = document.getElementById('{{ form.price.id_for_label }}');
+            const descriptionField = document.getElementById('{{ form.description.id_for_label }}');
+            const categoryField = document.getElementById('{{ form.category_id.id_for_label }}');
+
+            // Remover clase de error cuando el usuario empiece a escribir
+            [titleField, priceField, descriptionField, categoryField].forEach(field => {
+                if (field) {
+                    field.addEventListener('input', function() {
+                        this.classList.remove('is-invalid');
+                    });
+                }
+            });
+
+            // Validación específica para el precio
+            if (priceField) {
+                priceField.addEventListener('blur', function() {
+                    const value = parseFloat(this.value);
+                    if (value <= 0) {
+                        this.classList.add('is-invalid');
+                        let feedback = this.parentNode.querySelector('.invalid-feedback') || 
+                                     this.parentNode.parentNode.querySelector('.invalid-feedback');
+                        if (!feedback) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            this.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = 'El precio debe ser mayor que cero.';
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            }
+
+            // Auto-dismiss alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                if (alert.classList.contains('alert-success')) {
+                    setTimeout(() => {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }, 5000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
