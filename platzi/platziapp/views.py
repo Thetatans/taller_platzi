@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.shortcuts import redirect
 import requests
+
 import json
 
 
@@ -42,23 +43,87 @@ def products_list(request):
     # Si no es GET, retornar error
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
-
 # Vista para mostrar el detalle de un producto específico
 def product_detail(request, product_id):
     try:
+        # Obtener el producto principal
         response = requests.get(f'https://api.escuelajs.co/api/v1/products/{product_id}', timeout=10)
         
         if response.status_code == 200:
             product = response.json()
-            context = {'product': product}
+            
+            # Obtener productos relacionados por categoría
+            related_products = []
+            
+            # Si el producto tiene categoría, buscar otros productos de la misma categoría
+            if product.get('category') and product.get('category', {}).get('id'):
+                category_id = product['category']['id']
+                
+                try:
+                    # Obtener productos de la misma categoría
+                    category_response = requests.get(
+                        f'https://api.escuelajs.co/api/v1/categories/{category_id}/products',
+                        timeout=10
+                    )
+                    
+                    if category_response.status_code == 200:
+                        category_products = category_response.json()
+                        
+                        # Filtrar el producto actual y limitar a 4 productos relacionados
+                        related_products = [
+                            p for p in category_products 
+                            if p.get('id') != product.get('id')
+                        ][:4]
+                        
+                except requests.exceptions.RequestException:
+                    # Si falla la petición de categoría, obtener productos aleatorios
+                    try:
+                        all_products_response = requests.get(
+                            'https://api.escuelajs.co/api/v1/products?limit=20',
+                            timeout=10
+                        )
+                        if all_products_response.status_code == 200:
+                            all_products = all_products_response.json()
+                            # Filtrar el producto actual y tomar 4 aleatorios
+                            related_products = [
+                                p for p in all_products 
+                                if p.get('id') != product.get('id')
+                            ][:4]
+                    except requests.exceptions.RequestException:
+                        related_products = []
+            
+            else:
+                # Si no tiene categoría, obtener productos aleatorios
+                try:
+                    all_products_response = requests.get(
+                        'https://api.escuelajs.co/api/v1/products?limit=20',
+                        timeout=10
+                    )
+                    if all_products_response.status_code == 200:
+                        all_products = all_products_response.json()
+                        # Filtrar el producto actual y tomar 4 aleatorios
+                        related_products = [
+                            p for p in all_products 
+                            if p.get('id') != product.get('id')
+                        ][:4]
+                except requests.exceptions.RequestException:
+                    related_products = []
+            
+            context = {
+                'product': product,
+                'related_products': related_products
+            }
             return render(request, 'product_detalles.html', context)
+            
         else:
             context = {'error': 'Producto no encontrado'}
             return render(request, 'product_detalles.html', context)
-            
+    
     except requests.exceptions.RequestException as e:
         context = {'error': 'Error al cargar el producto'}
         return render(request, 'product_detalles.html', context)
+
+
 
 
 # Vista para la página de inicio
@@ -67,20 +132,27 @@ def home(request):
         # Obtener los ultimos productos creados
 
         
-        response = requests.get('https://api.escuelajs.co/api/v1/products?offset=0&limit=6', timeout=10)
+        response = requests.get('https://api.escuelajs.co/api/v1/products', timeout=10)
         
         if response.status_code == 200:
-            featured_products = response.json()
-            context = {'featured_products': featured_products}
+            all_products = response.json()
+            context = {'all_products': all_products}
             return render(request, 'home.html', context)
         else:
-            context = {'featured_products': []}
+            context = {'all_products': []}
             return render(request, 'home.html', context)
+                # Obtener los ultimos productos creados
+
+
+
             
     except requests.exceptions.RequestException as e:
-        context = {'featured_products': []}
+        context = {'all_products': []}
         return render(request, 'home.html', context)
+    
 
+
+     #mostrar productos relacionados por categoría en la pagina detalle del producto
 
 # Vista para crear un nuevo producto
 @csrf_exempt
@@ -277,7 +349,8 @@ def delete_product(request, product_id):
             product_name = "el producto"
             
               
-
+              
+            # peticion de delete ya no va a json sino retorna a home.html 
             if product_response.status_code == 200:
                 product = product_response.json()
                 product_name = product.get('title', 'el producto')
@@ -301,3 +374,5 @@ def delete_product(request, product_id):
             return redirect('platziapp:product_detail', product_id=product_id)
     
     return redirect('platziapp:products_list')
+
+

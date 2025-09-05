@@ -108,12 +108,14 @@
     </div>
 </div>
 
-<!-- Productos Destacados -->
+
+
+<!-- SECCIÓN DE TODOS LOS PRODUCTOS -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="mb-0">
-                <i class="fas fa-fire text-danger me-2"></i>Productos Destacados
+                <i class="fas fa-boxes text-primary me-2"></i>Más Productos
             </h2>
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.reload()">
@@ -128,10 +130,10 @@
     </div>
 </div>
 
- 
-{% if featured_products %}
+<!-- mostrar todos los productos -->
+{% if all_products %}
 <div class="row">
-    {% for product in featured_products %}
+    {% for product in all_products %}
     <div class="col-md-4 col-lg-2 mb-4">
         <div class="card product-card h-100 shadow-sm border-0">
             {% if product.images.0 %}
@@ -176,14 +178,6 @@
     </div>
     {% endfor %}
 </div>
-
-<!-- Botón para ver más productos -->
-<div class="row mt-4">
-    <div class="col-12 text-center">
-       
-    </div>
-</div>
-
 {% else %}
 <!-- Mensaje cuando no hay productos -->
 <div class="row">
@@ -192,17 +186,16 @@
             <div class="mb-4">
                 <i class="fas fa-box-open fa-4x text-info"></i>
             </div>
-            <h4 class="alert-heading">¡No hay productos disponibles!</h4>
-            <p class="mb-4">No se pudieron cargar los productos en este momento. Esto puede deberse a problemas de conexión con la API.</p>
+            <h4 class="alert-heading">¡No hay productos adicionales disponibles!</h4>
+            <p class="mb-4">No se pudieron cargar más productos en este momento.</p>
             <hr>
             <div class="d-flex flex-wrap justify-content-center gap-2">
                 <button class="btn btn-info" onclick="location.reload()">
                     <i class="fas fa-refresh me-1"></i>Recargar Página
                 </button>
                 <a href="{% url 'platziapp:create_product' %}" class="btn btn-primary">
-                    <i class="fas fa-plus-circle me-1"></i>Agregar Primer Producto
+                    <i class="fas fa-plus-circle me-1"></i>Agregar Producto
                 </a>
-               
             </div>
         </div>
     </div>
@@ -265,6 +258,25 @@ document.getElementById('productIdInput').addEventListener('keypress', function(
         searchProductById(event);
     }
 });
+
+// Animación para las cards de productos destacados
+document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    });
+
+    document.querySelectorAll('.featured-card').forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+        observer.observe(card);
+    });
+});
 </script>
 
 <!-- CSS adicional -->
@@ -277,6 +289,16 @@ document.getElementById('productIdInput').addEventListener('keypress', function(
 .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.featured-card {
+    border: 2px solid #ffc107 !important;
+    background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+}
+
+.featured-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(255, 193, 7, 0.3) !important;
 }
 
 .product-image {
@@ -333,6 +355,10 @@ document.getElementById('productIdInput').addEventListener('keypress', function(
     .input-group .btn {
         font-size: 1rem;
         padding: 0.5rem 1rem;
+    }
+    
+    .featured-card .badge {
+        font-size: 0.7rem;
     }
 }
 </style>
