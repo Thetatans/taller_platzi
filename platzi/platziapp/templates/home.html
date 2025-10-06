@@ -6,11 +6,13 @@
 <!-- Hero Section -->
 <div class="row mb-5">
     <div class="col-12">
-        <div class="bg-primary text-white p-5 rounded-3 text-center position-relative">
-            <h1 class="display-4 mb-3">
-                <i class="fas fa-store"></i> Bienvenido a Platzi Store
-            </h1>
-            <p class="lead mb-4">Descubre los mejores productos con nuestra API de demostración</p>
+        <div class="hero-section text-white p-5 rounded-3 text-center position-relative">
+            <div class="hero-overlay"></div>
+            <div class="position-relative z-index-2">
+                <h1 class="display-3 mb-3 fw-bold">
+                    <i class="fas fa-store me-3"></i>Platzi Store Dashboard
+                </h1>
+                <p class="lead mb-4 fs-4">Panel de control moderno para gestión de productos</p>
             
             <!-- Barra de búsqueda por ID -->
             <div class="row justify-content-center mb-4">
@@ -37,6 +39,8 @@
                     <i class="fas fa-plus-circle me-2"></i>Agregar Producto
                 </a>
             </div>
+           
+            
         </div>
     </div>
 </div>
@@ -44,64 +48,68 @@
 <!-- Estadísticas rápidas -->
 <div class="row mb-5">
     <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card text-center border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-center">
-                    <div class="me-3">
-                        <i class="fas fa-box-open fa-2x text-primary"></i>
-                    </div>
-                    <div>
-                        <h3 class="card-title mb-0">{{ featured_products|length|default:"0" }}</h3>
-                        <small class="text-muted">Productos Destacados</small>
-                    </div>
+        <div class="stats-card card text-center border-0 shadow h-100">
+            <div class="card-body p-4">
+                <div class="stats-icon mb-3">
+                    <i class="fas fa-box-open fa-3x"></i>
+                </div>
+                <h2 class="card-title fw-bold mb-1">{{ featured_products|length|default:"0" }}</h2>
+                <p class="text-muted mb-0">Productos Destacados</p>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-gradient" style="width: 75%;"></div>
                 </div>
             </div>
         </div>
     </div>
     
     <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card text-center border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-center">
-                    <div class="me-3">
-                        <i class="fas fa-tags fa-2x text-success"></i>
-                    </div>
-                    <div>
-                        <h3 class="card-title mb-0">5+</h3>
-                        <small class="text-muted">Categorías</small>
-                    </div>
+        <div class="stats-card stats-card-green card text-center border-0 shadow h-100">
+            <div class="card-body p-4">
+                <div class="stats-icon mb-3">
+                    <i class="fas fa-tags fa-3x"></i>
+                </div>
+                <h2 class="card-title fw-bold mb-1">5+</h2>
+                <p class="text-muted mb-0">Categorías</p>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-success" style="width: 85%;"></div>
                 </div>
             </div>
         </div>
     </div>
     
     <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card text-center border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-center">
-                    <div class="me-3">
-                        <i class="fas fa-star fa-2x text-warning"></i>
-                    </div>
-                    <div>
-                        <h3 class="card-title mb-0">4.8</h3>
-                        <small class="text-muted">Calificación</small>
-                    </div>
+        <div class="stats-card stats-card-yellow card text-center border-0 shadow h-100">
+            <div class="card-body p-4">
+                <div class="stats-icon mb-3">
+                    <i class="fas fa-star fa-3x"></i>
+                </div>
+                <h2 class="card-title fw-bold mb-1">4.8</h2>
+                <p class="text-muted mb-0">Calificación</p>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-warning" style="width: 96%;"></div>
                 </div>
             </div>
         </div>
     </div>
     
     <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card text-center border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-center">
-                    <div class="me-3">
-                        <i class="fas fa-users fa-2x text-info"></i>
-                    </div>
-                    <div>
-                        <h3 class="card-title mb-0">1000+</h3>
-                        <small class="text-muted">Clientes Felices</small>
-                    </div>
+        <div class="stats-card stats-card-cyan card text-center border-0 shadow h-100">
+            <div class="card-body p-4">
+                <div class="stats-icon mb-3">
+                    <i class="fas fa-users fa-3x"></i>
+                </div>
+                <h2 class="card-title fw-bold mb-1">1000+</h2>
+                <p class="text-muted mb-0">Clientes Felices</p>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-info" style="width: 92%;"></div>
                 </div>
             </div>
         </div>
@@ -281,44 +289,154 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- CSS adicional -->
 <style>
+/* Dashboard Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.z-index-2 { z-index: 2; }
+
+/* Stats Cards */
+.stats-card {
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 20px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.stats-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+}
+
+.stats-card-green {
+    background: linear-gradient(145deg, #ffffff 0%, #f0fff4 100%);
+}
+
+.stats-card-yellow {
+    background: linear-gradient(145deg, #ffffff 0%, #fffbf0 100%);
+}
+
+.stats-card-cyan {
+    background: linear-gradient(145deg, #ffffff 0%, #f0fcff 100%);
+}
+
+.stats-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.stats-card-green .stats-icon {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stats-card-yellow .stats-icon {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stats-card-cyan .stats-icon {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Product Cards */
 .product-card {
-    transition: all 0.3s ease;
-    border-radius: 15px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 20px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(0,0,0,0.05);
+    overflow: hidden;
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
-}
-
-.featured-card {
-    border: 2px solid #ffc107 !important;
-    background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
-}
-
-.featured-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(255, 193, 7, 0.3) !important;
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15) !important;
 }
 
 .product-image {
-    border-radius: 15px 15px 0 0;
+    border-radius: 20px 20px 0 0;
+    transition: transform 0.4s ease;
 }
 
-.bg-gradient {
-    background: linear-gradient(135deg, #fbfbfbff 0%, #0c1fa9ff 100%) !important;
+.product-card:hover .product-image {
+    transform: scale(1.05);
 }
 
+.featured-card {
+    border: 3px solid transparent;
+    background: linear-gradient(145deg, #fff9e6 0%, #ffffff 100%);
+    background-clip: padding-box;
+    position: relative;
+}
+
+.featured-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+    z-index: -1;
+    margin: -3px;
+}
+
+/* Buttons and Form Elements */
 .btn {
-    border-radius: 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
 .card {
-    border-radius: 15px;
+    border-radius: 20px;
 }
 
 .badge {
-    border-radius: 10px;
+    border-radius: 12px;
+    font-weight: 600;
 }
 
 /* Estilos para la barra de búsqueda */

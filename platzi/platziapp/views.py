@@ -4,10 +4,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.shortcuts import redirect
 import requests
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db.models import Q
 
-import json
 
-
+@login_required(login_url='accounts:login')
 # Vista principal para mostrar todos los productos
 def products_list(request):
     if request.method == 'GET':
@@ -43,7 +45,9 @@ def products_list(request):
     # Si no es GET, retornar error
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
+
 # Vista para mostrar el detalle de un producto específico
+@login_required(login_url='accounts:login')
 def product_detail(request, product_id):
     try:
         # Obtener el producto principal
@@ -127,11 +131,16 @@ def product_detail(request, product_id):
 
 
 # Vista para la página de inicio
+@login_required(login_url='accounts:login')
+def inicio(request):
+    return render(request, 'inicio.html')
+    
+
+@login_required(login_url='accounts:login')
 def home(request):
+#aparecer inicio.html
     try:
         # Obtener los ultimos productos creados
-
-        
         response = requests.get('https://api.escuelajs.co/api/v1/products', timeout=10)
         
         if response.status_code == 200:
@@ -144,16 +153,16 @@ def home(request):
                 # Obtener los ultimos productos creados
 
 
-
             
     except requests.exceptions.RequestException as e:
-        context = {'all_products': []}
+
         return render(request, 'home.html', context)
     
 
 
-     #mostrar productos relacionados por categoría en la pagina detalle del producto
 
+     #mostrar productos relacionados por categoría en la pagina detalle del producto
+@login_required(login_url='accounts:login')
 # Vista para crear un nuevo producto
 @csrf_exempt
 def create_product(request):
@@ -229,7 +238,7 @@ def create_product(request):
             })
     
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
+@login_required(login_url='accounts:login')
 @csrf_exempt
 def edit_product(request, product_id):
     if request.method == 'GET':
@@ -321,7 +330,7 @@ def edit_product(request, product_id):
     
     return redirect('platziapp:products_list')
 
-
+@login_required(login_url='accounts:login')
 # Vista para borrar un producto
 @csrf_exempt
 def delete_product(request, product_id):

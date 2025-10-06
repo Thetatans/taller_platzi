@@ -5,8 +5,10 @@ app_name = 'platziapp'
 
 urlpatterns = [
     # Página de inicio
-    path('', views.home, name='home'),
+    path('', views.inicio, name='inicio'),
     
+    
+    path('/home', views.home,  name='home'),
     # Lista de productos (API endpoint)
     path('api/products/', views.products_list, name='products_list'),
     

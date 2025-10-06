@@ -1,3 +1,15 @@
+import requests
+import json
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.urls import reverse
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.conf import settings
+from .forms import UserRegistrationForm, UserLoginForm
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -11,6 +23,9 @@ from .serializers import (
     UserSerializer
 )
 
+
+# URL base de tu API (configurable desde settings)
+API_BASE_URL = "http://127.0.0.1:8000/api/"
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -199,3 +214,124 @@ def check_username_api(request):
         'available': not exists,
         'message': 'Nombre de usuario no disponible' if exists else 'Nombre de usuario disponible'
     }, status=status.HTTP_200_OK)
+
+@csrf_protect
+@never_cache
+def register_view(request):
+    """Vista para mostrar y procesar el formulario de registro"""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        first_name = request.POST.get('first_name', '')
+        last_name = request.POST.get('last_name', '')
+        
+        # Validaciones
+        if not username or not email or not password:
+            messages.error(request, 'Por favor, completa todos los campos obligatorios.')
+            return render(request, 'register.html')
+        
+        # Verificar que las contraseñas coincidan
+        if password != confirm_password:
+            messages.error(request, 'Las contraseñas no coinciden.')
+            return render(request, 'register.html')
+        
+        # Verificar longitud mínima de contraseña
+        if len(password) < 6:
+            messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
+            return render(request, 'register.html')
+        
+        # Verificar si el usuario ya existe
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Este nombre de usuario ya está en uso.')
+            return render(request, 'register.html')
+        
+        # Verificar si el email ya existe
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Este email ya está registrado.')
+            return render(request, 'register.html')
+        
+        try:
+            # Crear el usuario
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name
+            )
+            
+            messages.success(request, '¡Cuenta creada exitosamente! Ya puedes iniciar sesión.')
+            return redirect('platziapp:home')  # Redirigir al login después del registro exitoso
+            
+        except Exception as e:
+            messages.error(request, 'Error al crear la cuenta. Inténtalo de nuevo.')
+            return render(request, 'register.html')
+    
+    # Si es GET, mostrar el formulario de registro
+    return render(request, 'register.html')
+
+@csrf_protect
+@never_cache
+def login_view(request):
+    """Vista para mostrar y procesar el formulario de login"""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        # Validar que los campos no estén vacíos
+        if not username or not password:
+            messages.error(request, 'Por favor, completa todos los campos.')
+            return render(request, 'login.html')
+        
+        # Autenticar usuario
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            messages.success(request, f'¡Bienvenido, {user.username}!')
+            # Redirigir a la página deseada después del login
+            return redirect('platziapp:home')
+        else:
+            messages.error(request, 'Credenciales incorrectas. Inténtalo de nuevo.')
+            return render(request, 'login.html')
+    
+    # Si es GET, mostrar el formulario de login
+    return render(request, 'login.html')
+
+def logout_view(request):
+    """
+    Vista para cerrar sesión
+    """
+    username = request.user.username if request.user.is_authenticated else None
+    
+    # Opcional: llamar al endpoint de logout de la API
+    if 'api_token' in request.session:
+        try:
+            requests.post(
+                f"{API_BASE_URL}logout/",
+                json={'refresh_token': request.session.get('refresh_token', '')},
+                headers={
+                    'Authorization': f'Bearer {request.session["api_token"]}',
+                    'Content-Type': 'application/json'
+                },
+                timeout=5
+            )
+        except:
+            pass  # Si falla, continuar con el logout local
+        
+        # Limpiar tokens de la sesión
+        del request.session['api_token']
+        if 'refresh_token' in request.session:
+            del request.session['refresh_token']
+    
+    # Cerrar sesión en Django
+    logout(request)
+    
+    if username:
+        messages.success(request, f'Has cerrado sesión exitosamente, {username}. ¡Hasta pronto!')
+    else:
+        messages.success(request, 'Has cerrado sesión exitosamente.')
+    
+    return redirect('accounts:login')

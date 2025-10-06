@@ -1,0 +1,109 @@
+{% extends 'base2.html' %}
+
+{% block title %}Inicio - Platzi Store{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="bg-primary text-white p-5 rounded-3 text-center position-relative">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-store"></i> Bienvenido a Platzi Store
+            </h1>
+            <p class="lead mb-4">Descubre los mejores productos con nuestra API de demostración</p>
+           
+            
+            
+        
+    </div>
+</div>
+
+            <!-- Barra de búsqueda por ID -->
+            
+
+
+<!-- CSS adicional -->
+<style>
+.product-card {
+    transition: all 0.3s ease;
+    border-radius: 15px;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.featured-card {
+    border: 2px solid #ffc107 !important;
+    background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+}
+
+.featured-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(255, 193, 7, 0.3) !important;
+}
+
+.product-image {
+    border-radius: 15px 15px 0 0;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #fbfbfbff 0%, #0c1fa9ff 100%) !important;
+}
+
+.btn {
+    border-radius: 10px;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.badge {
+    border-radius: 10px;
+}
+
+/* Estilos para la barra de búsqueda */
+.input-group .form-control {
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+}
+
+.input-group .btn {
+    border-radius: 0 10px 10px 0;
+    border-left: none;
+}
+
+.input-group .form-control:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.input-group .form-control::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .input-group .form-control,
+    .input-group .btn {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .featured-card .badge {
+        font-size: 0.7rem;
+    }
+}
+</style>
+
+{% endblock %}
